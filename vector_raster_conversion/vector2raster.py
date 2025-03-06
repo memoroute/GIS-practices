@@ -257,7 +257,7 @@ def geojson_to_raster(geojson_path, cell_size, attribute_name='value'):
 
 
 if __name__ == "__main__":
-    raster, params = geojson_to_raster('wuchang.geojson', cell_size=0.01)
+    raster, params = geojson_to_raster('test.geojson', cell_size=0.01)
     print("栅格矩阵：")
     print(raster)
     print("\n栅格参数（原点x, 原点y, 像元大小）：")
