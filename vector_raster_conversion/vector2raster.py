@@ -3,7 +3,16 @@ import numpy as np
 
 
 def bresenham_line(start, end):
-    """Bresenham算法生成矢量直线对应的栅格坐标列表"""
+    """
+    使用Bresenham算法生成矢量直线对应的栅格坐标列表。
+
+    Args:
+        start (tuple): 起点的列和行坐标 (j0, i0)。
+        end (tuple): 终点的列和行坐标 (j1, i1)。
+
+    Returns:
+        list: 直线经过的所有栅格坐标列表，每个坐标为 (j, i) 形式。
+    """
     j0, i0 = start  # 起点的列和行坐标
     j1, i1 = end    # 终点的列和行坐标
 
@@ -36,7 +45,16 @@ def bresenham_line(start, end):
 
 
 def point_in_polygon(point, polygon):
-    """射线法，判断点是否在多边形内"""
+    """
+    使用射线法判断点是否在多边形内。
+
+    Args:
+        point (tuple): 目标点的坐标 (x, y)。
+        polygon (list): 多边形的顶点坐标列表，每个顶点为 (x, y) 形式。
+
+    Returns:
+        bool: 如果点在多边形内返回 True，否则返回 False。
+    """
     x, y = point  # 目标点坐标
     n = len(polygon)  # 多边形顶点数
     result = False  # 判断结果，初始为否
@@ -56,6 +74,19 @@ def point_in_polygon(point, polygon):
 
 
 def geojson_to_raster(geojson_path, cell_size, attribute_name='value'):
+    """
+    将GeoJSON文件中的矢量数据转换为栅格数据。
+
+    Args:
+        geojson_path (str): GeoJSON文件的路径。
+        cell_size (float): 栅格单元的大小。
+        attribute_name (str, optional): 用于填充栅格的属性名称，默认为 'value'。
+
+    Returns:
+        tuple: 包含两个元素的元组：
+            - raster (numpy.ndarray): 生成的栅格矩阵。
+            - params (tuple): 栅格参数，包含原点x坐标、原点y坐标和像元大小。
+    """
     # 读取并解析GeoJSON
     with open(geojson_path, 'r', encoding='utf-8') as f:
         data = geojson.load(f)
