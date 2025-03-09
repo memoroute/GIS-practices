@@ -1,0 +1,19 @@
+data:
+  time_column: "time"
+  x_column: "lon"
+  y_column: "lat"
+  value_column: "temperature"
+  crs_input: "EPSG:4326"
+  crs_output: "EPSG:3857"
+visualization:
+  colormap: "viridis"
+  z_scale: 1000  # 时间轴缩放系数（单位：米/时间步）
+  marker_size: 10
+  view_angle: [30, 45]  # 初始视角（仰角，方位角）
+output:
+  format: "png"
+  dpi: 300
+  save_path: "./output"
+performance:
+  max_rows: 100000  # 超过此数量时自动降采样
+  use_gpu: False
