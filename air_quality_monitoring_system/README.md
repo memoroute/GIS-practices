@@ -1,121 +1,79 @@
-# Air Quality Kriging Interpolation System
+# 空气质量克里金插值系统
 
-## System Overview
+## 系统概述
 
-This system implements a complete workflow for geospatial interpolation of air quality data (specifically PM2.5 concentrations) using the Kriging method. The system is designed to be modular, configurable, and capable of handling both real and synthetic data.
+该系统实现了一个完整的工作流程，用于空气质量数据（特别是PM2.5浓度）的地理空间插值，采用克里金法。该系统设计为模块化、可配置，并能够处理真实和合成数据。
 
-## Core Components
+## 核心组件
 
-### 1. Data Preparation Module
+### 1. 数据准备模块
 
-The data preparation module handles:
+数据准备模块处理：
 
-- **Data loading and generation**: Can either load real monitoring data from CSV files or generate synthetic sample data with realistic spatial patterns.
-- **Outlier detection and handling**: Uses z-score method to identify and handle anomalous values.
-- **Coordinate system transformation**: Converts between geographic (WGS84) and projected coordinate systems.
-- **Grid parameter calculation**: Determines appropriate interpolation grid based on data extent.
+- **数据加载和生成**：可以从CSV文件加载真实监测数据，或生成具有真实空间模式的合成样本数据。
+- **异常值检测和处理**：使用z分数方法识别和处理异常值。
+- **坐标系统转换**：在地理坐标（WGS84）和投影坐标系统之间转换。
+- **网格参数计算**：根据数据范围确定适当的插值网格。
 
-### 2. Kriging Module
+### 2. 克里金模块
 
-The kriging module implements:
+克里金模块实现：
 
-- **Variogram analysis**: Calculates and models the spatial autocorrelation structure of the data.
-- **Three variogram models**: Supports spherical, exponential, and Gaussian models with automatic parameter fitting.
-- **Ordinary Kriging algorithm**: Implements the core kriging interpolation algorithm.
-- **KDTree optimization**: Provides accelerated kriging for large datasets using nearest neighbor selection.
+- **变异函数分析**：计算和建模数据的空间自相关结构。
+- **三种变异函数模型**：支持球形、指数和高斯模型，具有自动参数拟合功能。
+- **普通克里金算法**：实现核心克里金插值算法。
+- **KDTree优化**：使用最近邻选择为大型数据集提供加速克里金。
 
-The mathematical foundation of kriging is based on the following principles:
+克里金的数学基础基于以下原则：
 
-1. **Variogram estimation**: The experimental variogram is calculated as:
+1. **变异函数估计**：实验变异函数计算为：
    γ(h) = (1/2N(h)) * Σ[Z(xi) - Z(xi+h)]²
-   where N(h) is the number of point pairs at distance h.
+   其中N(h)是距离为h的点对数量。
 
-2. **Variogram modeling**: The experimental variogram is fitted with theoretical models:
-   - Spherical: γ(h) = c0 + c1 * [1.5(h/a) - 0.5(h/a)³] for h ≤ a, c0 + c1 for h > a
-   - Exponential: γ(h) = c0 + c1 * [1 - exp(-h/a)]
-   - Gaussian: γ(h) = c0 + c1 * [1 - exp(-h²/a²)]
-   where c0 is the nugget, c1 is the sill, and a is the range.
+2. **变异函数建模**：实验变异函数与理论模型拟合：
+   - 球形：γ(h) = c0 + c1 * [1.5(h/a) - 0.5(h/a)³]（当h ≤ a时），c0 + c1（当h > a时）
+   - 指数：γ(h) = c0 + c1 * [1 - exp(-h/a)]
+   - 高斯：γ(h) = c0 + c1 * [1 - exp(-h²/a²)]
+   其中c0是块金效应，c1是基台值，a是变程。
 
-3. **Kriging equations**: The ordinary kriging estimator is:
+3. **克里金方程**：普通克里金估计器为：
    Z*(x0) = Σ λi * Z(xi)
-   where λi are weights determined by solving:
-   Σ λj * γ(xi-xj) + μ = γ(xi-x0) for all i
+   其中λi是通过解决以下方程得到的权重：
+   Σ λj * γ(xi-xj) + μ = γ(xi-x0)（对所有i成立）
    Σ λi = 1
-   where μ is a Lagrange multiplier.
+   其中μ是拉格朗日乘子。
 
-### 3. Visualization Module
+### 3. 可视化模块
 
-The visualization module creates:
+可视化模块创建：
 
-- **Monitoring station maps**: Shows the distribution and values of input data points.
-- **Interpolation contour maps**: Visualizes the kriging predictions with contour lines.
-- **Uncertainty maps**: Displays the kriging variance as a measure of prediction uncertainty.
-- **Variogram plots**: Shows experimental and modeled variograms.
-- **Interactive web maps**: Creates HTML-based maps using Folium for interactive exploration.
+- **监测站点地图**：显示输入数据点的分布和值。
+- **插值等值线图**：通过等值线可视化克里金预测。
+- **不确定性地图**：将克里金方差显示为预测不确定性的度量。
+- **变异函数图**：显示实验和建模的变异函数。
+- **交互式网络地图**：使用Folium创建基于HTML的地图，用于交互式探索。
 
-### 4. Validation Module
+### 4. 验证模块
 
-The validation module:
+验证模块：
 
-- **Cross-validation**: Implements k-fold cross-validation to assess prediction accuracy.
-- **Error metrics**: Calculates RMSE, MAE, MAPE, and R² statistics.
-- **GeoTIFF export**: Saves interpolation results and variance in GeoTIFF format.
+- **交叉验证**：实现k折交叉验证来评估预测准确性。
+- **误差指标**：计算RMSE、MAE、MAPE和R²统计数据。
+- **GeoTIFF导出**：以GeoTIFF格式保存插值结果和方差。
 
-## Key Features
+## 主要特点
 
-1. **Configurable parameters**: All system parameters can be adjusted through a single YAML configuration file.
-2. **Comprehensive visualization**: Multiple visualization methods for both data and results.
-3. **Uncertainty quantification**: Provides kriging variance as a measure of prediction reliability.
-4. **Cross-validation**: Includes methods to validate and assess the accuracy of predictions.
-5. **Performance optimization**: Uses KDTree for handling larger datasets efficiently.
-6. **GIS integration**: Exports results in standard GIS formats (GeoTIFF).
-7. **Interactive web maps**: Creates browser-viewable maps for easy data exploration.
+1. **可配置参数**：所有系统参数都可以通过单个YAML配置文件进行调整。
+2. **全面可视化**：数据和结果的多种可视化方法。
+3. **不确定性量化**：提供克里金方差作为预测可靠性的度量。
+4. **交叉验证**：包括验证和评估预测准确性的方法。
+5. **性能优化**：使用KDTree高效处理较大的数据集。
+6. **GIS集成**：以标准GIS格式（GeoTIFF）导出结果。
+7. **交互式网络地图**：创建浏览器可查看的地图，便于数据探索。
 
-## Usage Example
+## 使用示例
 
-The system can be run with the default configuration:
+系统可以使用默认配置运行：
 
 ```bash
 python main.py
-```
-
-Or with a custom configuration file:
-
-```bash
-python main.py --config custom_config.yaml
-```
-
-## Configuration Options
-
-The system is highly configurable through the `config.yaml` file, which includes settings for:
-
-- Data generation and preprocessing
-- Coordinate system transformations
-- Variogram model selection and parameters
-- Grid resolution and extent
-- Visualization options
-- Validation methods
-- Output formats and locations
-
-## Outputs
-
-The system produces:
-
-1. Visualizations:
-   - Station distribution map
-   - Interpolation contour/heatmap
-   - Prediction uncertainty map
-   - Variogram plot
-
-2. Data files:
-   - GeoTIFF raster of predictions and uncertainty
-   - Interactive HTML map
-   - Validation statistics
-
-## Implementation Details
-
-- Uses PyKrige for the core kriging algorithms
-- Employs matplotlib and seaborn for static visualization
-- Leverages Folium for interactive web maps
-- Uses pyproj for coordinate system transformations
-- Implements rasterio for GeoTIFF export
