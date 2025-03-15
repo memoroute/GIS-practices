@@ -1,0 +1,53 @@
+# 数据设置
+data:
+  input_file: "data/input/air_quality_data.csv"  # 输入数据文件路径
+  generate_sample: true  # 如果为true则生成示例数据
+  sample_size: 50        # 要生成的示例点数量
+  sample_area:           # 示例生成区域（WGS84坐标系）
+    min_lon: 113.6       # 最小经度
+    max_lon: 115.0       # 最大经度
+    min_lat: 29.0        # 最小纬度
+    max_lat: 31.5        # 最大纬度
+  outlier_threshold: 3.0  # 异常值检测的Z分数阈值
+
+# 坐标系统配置
+coordinates:
+  source_crs: "EPSG:4326"  # 原始坐标系统（WGS84）
+  target_crs: "EPSG:3857"  # 目标坐标系统（Web墨卡托投影）
+  convert: true            # 是否进行坐标转换
+
+# 克里金插值配置
+kriging:
+  variogram_model: "spherical"  # 变差函数模型（可选：球型/指数/高斯）
+  auto_fit: true                # 是否自动拟合变差函数参数
+  manual_parameters:            # 当auto_fit为false时使用手动参数
+    range: 100000.0             # 变程（空间自相关范围）
+    sill: 250.0                 # 基台值（最大方差）
+    nugget: 10.0                # 块金效应（测量误差）
+  nlags: 20                     # 变差函数计算的滞后等级数
+
+# 插值网格设置
+grid:
+  resolution: 100  # 每个维度的网格点数（分辨率）
+  padding: 0.1     # 网格扩展边距（数据范围的百分比）
+
+# 可视化配置
+visualization:
+  station_marker_size: 30   # 监测站点标记大小
+  contour_levels: 10        # 等值线分级数量
+  colormap: "viridis"       # 色标名称
+  include_basemap: true     # 是否包含底图（Folium地图）
+
+# 验证配置
+validation:
+  cross_validation: true  # 是否进行交叉验证
+  cv_folds: 5            # 交叉验证的折叠次数
+
+# 输出配置
+output:
+  save_geotiff: true      # 是否保存GeoTIFF文件
+  geotiff_file: "data/output/kriging_result.tif"  # GeoTIFF输出路径
+  save_html_map: true     # 是否保存交互式HTML地图
+  html_map_file: "data/output/interactive_map.html"  # HTML地图路径
+  save_figures: true      # 是否保存静态图表
+  figures_dir: "data/output/figures/"  # 图表保存目录
