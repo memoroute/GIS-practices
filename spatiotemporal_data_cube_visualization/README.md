@@ -10,13 +10,6 @@ This project creates 3D visualizations of geographical data over time, allowing 
 - Customizable visualization parameters (colormap, marker size, view angle)
 - High-quality output in PNG/SVG formats
 
-## Installation
-
-```bash
-git clone https://github.com/yourusername/geo-temporal-cube.git
-cd geo-temporal-cube
-pip install -r requirements.txt
-```
 
 ## Usage
 
